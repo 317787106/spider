@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+		#allmap {height:500px; width: 100%;}
+		#control{width:100%;}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dmtP3rufYrXvFwBxxkkMW1Y9"></script>
+	<title>设置线、面可编辑</title>
+<script async src="http://c.cnzz.com/core.php"></script></head>
+<body>
+	<div id="allmap"></div>
+	<div id="control">
+		<button onclick = "polyline.enableEditing();polygon.enableEditing();">开启线、面编辑功能</button>
+		<button onclick = "polyline.disableEditing();polygon.disableEditing();">关闭线、面编辑功能</button>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	// 百度地图API功能
+
+	
+	var pos = "121.707519103,31.2532338911;121.709729204,31.2541448073;121.710021154,31.2535079464;121.710609005,31.2521578054;121.709702165,31.2518639113;121.708812933,31.2511659093;121.70839001,31.2517059275;121.707798117,31.2514249208;121.707375105,31.2521189077;121.707995025,31.2523888758;121.707519103,31.2532338911;"
+	pos = pos.slice(0, -1);
+	var data = pos.split(";");
+	var pointArray = new Array();
+	for(var i=0;i<data.length;i++){
+		var point = new BMap.Point(data[i].split(",")[0],data[i].split(",")[1]);
+		pointArray.push(point);
+	}
+	
+	var tmp = data[data.length-1].split(",");
+	
+	var map = new BMap.Map("allmap");
+	map.centerAndZoom(new BMap.Point(tmp[0],tmp[1]), 15);
+	map.enableScrollWheelZoom();
+	
+	var polygon = new BMap.Polygon(pointArray, {strokeColor:"blue", strokeWeight:1, strokeOpacity:0.0, fillOpacity: 0.0, fillColor: "none"});  //创建多边形
+	map.addOverlay(polygon);   //增加多边形
+</script>
+

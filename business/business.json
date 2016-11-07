@@ -1,0 +1,49 @@
+{
+      "mappings": {
+		"startpos": {
+		 	"properties": {
+		           "rideid": {
+		              "type": "Integer", "store" :"yes", "index":"not_analyzed"
+		           },
+		           "create_time": {
+		              "type": "date", "format": "dateOptionalTime"
+		           },
+		           "plan_start_time": {
+		              "type": "date", "format": "dateOptionalTime"
+		           },
+		           "cityid": {
+		              "type": "Integer", "store" :"yes", "index":"not_analyzed"
+		           },
+		           "business": {
+		              "type": "string", "store" :"yes", "index":"not_analyzed"
+		           },
+		           "replied": {
+		              "type": "Integer", "store" :"yes", "index":"not_analyzed"
+		           }
+		        }
+		},
+		"endpos": {
+		    "properties": {
+		       "rideid": {
+		          "type": "Integer", "store" :"yes", "index":"not_analyzed"
+		       },
+		       "create_time": {
+		          "type": "date", "format": "dateOptionalTime"
+		       },
+		       "plan_start_time": {
+		          "type": "date", "format": "dateOptionalTime"
+		       },
+		       "cityid": {
+		          "type": "Integer", "store" :"yes", "index":"not_analyzed"
+		       },
+		       "business": {
+		          "type": "string", "store" :"yes", "index":"not_analyzed"
+		       },
+		       "replied": {
+		          "type": "Integer", "store" :"yes", "index":"not_analyzed"
+		       }
+		 	}
+ 		}
+ 		
+      }
+}
