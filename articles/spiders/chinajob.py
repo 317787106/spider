@@ -46,6 +46,7 @@ class AmazonSpider(BaseSpider):
                 meta['url'] = url
                 if isArticleExist(url) == False:
                     yield Request(url, callback=self.getContent, meta=meta)
+                    return
         
         next_page_urls = response.xpath(self.xpath['next_page_link']).extract()     
         #next_page_urls = response.xpath('//div[@id="displaypagenum"]//a[contains(text(),">>")]/@href').extract()
@@ -87,9 +88,9 @@ class AmazonSpider(BaseSpider):
             else:
                 item['publish_time'] = data
             
-        content = response.xpath(u'//div[@id="content"]').extract()
+        content = response.xpath(self.xpath['content']).extract()
         #content = response.xpath(u'//div[@id="content_content"]').extract()
-            
+
         if len(content) > 0:
         
             content = self.body_prefix + content[0] + self.body_suffix

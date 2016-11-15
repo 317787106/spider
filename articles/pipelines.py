@@ -86,7 +86,7 @@ class StorePipeline():
         
         #把文件内容写入数据库
         if spider.name in spidernames and item.get("content_type",0) == 2:
-            content = open(item.get("content")).read()
+            content = open(item.get("content_path")).read()
              
             sql2 = "update articles set content=%(content)s where url=%(url)s;"
             
