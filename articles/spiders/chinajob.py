@@ -46,7 +46,6 @@ class AmazonSpider(BaseSpider):
                 meta['url'] = url
                 if isArticleExist(url) == False:
                     yield Request(url, callback=self.getContent, meta=meta)
-                    return
         
         next_page_urls = response.xpath(self.xpath['next_page_link']).extract()     
         #next_page_urls = response.xpath('//div[@id="displaypagenum"]//a[contains(text(),">>")]/@href').extract()

@@ -54,11 +54,12 @@ class StorePipeline():
     def process_item(self, item, spider):
         
         if spider.name in spidernames:
-            sql = "insert into articles(url,classify,source,author,title,content_type,content_path,content,publish_time,abstract,keywords,attachments,create_time) \
-            values(%(url)s,%(classify)s,%(source)s,%(author)s,%(title)s,%(content_type)s,%(content_path)s,%(content)s, \
+            sql = "insert into articles(url,site,classify,source,author,title,content_type,content_path,content,publish_time,abstract,keywords,attachments,create_time) \
+            values(%(url)s,%(site)s,%(classify)s,%(source)s,%(author)s,%(title)s,%(content_type)s,%(content_path)s,%(content)s, \
             %(publish_time)s,%(abstract)s,%(keywords)s,%(attachments)s,now());"
             
             data = {"url":item["url"],
+                    "site":spider.name,
                     "classify":item["classify"],
                     "source":item.get("source",None),
                     "author":item.get("author",None),
