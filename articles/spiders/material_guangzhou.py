@@ -73,7 +73,6 @@ class AmazonSpider(MaterialSpider):
         
         item = MaterialItem()
         
-        
         #写入文件
         # md5每次都需要初始化
         m = hashlib.md5()
@@ -84,7 +83,7 @@ class AmazonSpider(MaterialSpider):
         fp.close()
         
         item["url"] = response.url
-        item["title"] = response.meta['title']
+        item["title"] = response.meta["title"]
         item["classify"] = self.name
         item["content_path"] = filename
         

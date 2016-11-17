@@ -7,69 +7,33 @@ import sys
 from scrapy import Selector
 from scrapy.http import HtmlResponse
 from scrapy.http import Request
-from articles.items import ArticleItem
-from articles.utils import isArticleExist
+from articles.items import MaterialItem
+from articles.utils import isMaterialExist
 from __init__ import MaterialSpider
 import urlparse
 from urllib import urlencode
 
 import re
+import hashlib
 
 class AmazonSpider(MaterialSpider):
 
     name = "beijing"
                             
     start_urls = [
-            "http://www.bjrbj.gov.cn/xxgk/gzdt/index_1.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_2.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_3.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_4.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_5.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_6.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_7.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_8.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_9.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_10.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gzdt/index_11.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_1.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_2.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_3.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_4.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_5.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_6.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_7.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_8.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_9.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_10.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_11.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_12.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_13.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_14.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_15.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_16.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_17.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_18.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_19.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_20.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_21.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_22.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_23.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_24.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_25.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_26.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_27.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_28.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_29.html",
-#             "http://www.bjrbj.gov.cn/xxgk/gsgg/index_30.html",
-#             "http://www.bjrbj.gov.cn/xxgk/zcfg/"
-#             "http://www.bjrbj.gov.cn/xxgk/zcfg/index_1.html",
-#             "http://www.bjrbj.gov.cn/xxgk/zcfg/index_2.html",
-#             "http://www.bjrbj.gov.cn/xxgk/zcjd/"
-#             "http://www.bjrbj.gov.cn/xxgk/zcjd/index_1.html",
-#             "http://www.bjrbj.gov.cn/xxgk/zcjd/index_2.html"
+            "http://www.bjrbj.gov.cn/xxgk/zcfg/"
+            "http://www.bjrbj.gov.cn/xxgk/zcfg/index_1.html",
+            "http://www.bjrbj.gov.cn/xxgk/zcfg/index_2.html",
+            "http://www.bjrbj.gov.cn/xxgk/zcjd/"
+            "http://www.bjrbj.gov.cn/xxgk/zcjd/index_1.html",
+            "http://www.bjrbj.gov.cn/xxgk/zcjd/index_2.html"
             ]
     
+    start_urls.extend(["http://www.bjrbj.gov.cn/xxgk/gzdt/index_%s.html" % page for page in range(1,24)])
+    start_urls.extend(["http://www.bjrbj.gov.cn/xxgk/gsgg/index_%s.html" % page for page in range(1,61)])
+    
     def parse(self,response):
+        meta = {'data_dir':self.data_dir}
         
         article_urls = Selector(text=response.body.decode("gbk")).xpath('//a[contains(@href,"html") and contains(@href,"/t")]/@href').extract()
         
@@ -79,7 +43,26 @@ class AmazonSpider(MaterialSpider):
             if not url.startswith("http:"):
                 index = url.find("/")
                 url = url_prefic + url[index:]
-                yield Request(url,callback=self.getContent)
+                yield Request(url,callback=self.getContent,meta=meta)
                 
     def getContent(self,response):
-        print response.url
+        item = MaterialItem()
+        
+        titles = Selector(text=response.body.decode("gbk")).xpath('//div[@class="conxq"]/h1/span/text()').extract()
+        if len(titles) > 0:
+            item["title"] = titles[0]
+            
+        #写入文件
+        # md5每次都需要初始化
+        m = hashlib.md5()
+        m.update(response.url)
+        filename = response.meta['data_dir']+m.hexdigest()+".html"
+        fp = open(filename,'w')
+        fp.write(response.body)
+        fp.close()
+        
+        item["url"] = response.url
+        item["classify"] = self.name
+        item["content_path"] = filename
+        
+        yield item
