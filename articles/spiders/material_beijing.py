@@ -39,7 +39,7 @@ class AmazonSpider(MaterialSpider):
         
         index = response.url.rfind("/")
         url_prefic = response.url[0:index]
-        for url in article_urls[0:1]:
+        for url in article_urls:
             if not url.startswith("http:"):
                 index = url.find("/")
                 url = url_prefic + url[index:]
