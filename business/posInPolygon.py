@@ -118,7 +118,7 @@ def getArea2User():
             if pointInPolygon(p,polygon):
                 count +=1
     print count
-                
+                    
 if __name__ == "__main__":
     getArea2User()
     
